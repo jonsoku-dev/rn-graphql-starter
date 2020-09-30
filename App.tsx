@@ -1,15 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import IndexScreen from './src/screens/IndexScreen';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+const client = new ApolloClient({
+  uri: 'http://878e1c658db6.ngrok.io/graphql',
+  cache: new InMemoryCache(),
+});
+
+const navigator = createStackNavigator(
+  {
+    Index: IndexScreen,
+  },
+  {
+    initialRouteName: 'Index',
+    defaultNavigationOptions: {
+      title: 'Blogs',
+    },
+  },
+);
+
+const App = createAppContainer(navigator);
 
 const styles = StyleSheet.create({
   container: {
@@ -19,3 +32,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default () => {
+  return (
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
+  );
+};
